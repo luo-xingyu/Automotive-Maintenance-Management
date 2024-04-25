@@ -3,7 +3,7 @@ Shanghai University Database principles (2) Project:
 
 A B/S-based automobile maintenance management system developed based on the domestic database **OpenGauss**.
 
-## Project Configuration
+## Project Configuration/Use OpenGauss like PostgreSQL
 Environment: 
 - OS : Ubuntu 23.10
 - Python : 3.12.2
