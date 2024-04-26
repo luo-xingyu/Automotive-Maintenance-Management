@@ -4,5 +4,7 @@ from . import views
 app_name = 'amm'
 
 urlpatterns = [
-    path('entry/', views.entry, name='entry'),  # 定义 /entry/ 也为 entry 视图，这里可能要用不同的名字以避免冲突
+    path('', views.home, name='home'),
+    path('entry/', views.entry, name='entry'), 
+    path('register/', views.register, name='register'),
 ]
