@@ -65,7 +65,6 @@ DATABASES = {
     }
 }
 ```
-![change settings](doc/setting.png)
 
 The **amm** database needs to be created manually after entering opengauss through the mysterious command above.
 
