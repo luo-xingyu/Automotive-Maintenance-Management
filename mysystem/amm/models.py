@@ -46,12 +46,16 @@ class Repair_commission(models.Model):
     labor_cost = models.FloatField()
     time = models.DateTimeField() # created time
     expected_delivery_time = models.DateTimeField()
+    is_carried = models.BooleanField(default=False)
+    is_paid = models.BooleanField(default=False)
 
 class Repair_order(models.Model):
     id = models.AutoField(primary_key=True)
     project = models.CharField(max_length=20)
     work_time = models.DateTimeField()
     repair_man_id = models.ForeignKey(Repair_man, on_delete=models.CASCADE)
+    is_finished = models.BooleanField(default=False)
+    repair_commission_id = models.ForeignKey(Repair_commission, on_delete=models.CASCADE)
 
 class Repair_cost(models.Model):
     id = models.AutoField(primary_key=True)

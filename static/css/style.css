@@ -137,6 +137,18 @@ footer .glyphicon {
   color: #f4511e;
 }
 
+.header-container {
+  display: flex;          /* 启用 Flexbox 布局 */
+  align-items: center;    /* 垂直居中对齐子元素 */
+  justify-content: space-between; /* 子元素之间保持间隔，第一个元素靠左，最后一个元素靠右 */
+  width: 100%;            /* 容器宽度 */
+}
+
+.header-title {
+  margin: 0;              /* 移除默认的 <p> 标签的边距 */
+  flex-grow: 1;           /* 允许标题占用多余的空间，确保按钮靠右对齐 */
+}
+
 
 .slideanim {visibility:hidden;}
 .slide {
