@@ -149,8 +149,8 @@ footer .glyphicon {
   flex-grow: 1;           /* 允许标题占用多余的空间，确保按钮靠右对齐 */
 }
 
-
 .slideanim {visibility:hidden;}
+
 .slide {
   animation-name: slide;
   -webkit-animation-name: slide;

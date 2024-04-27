@@ -11,7 +11,7 @@ class User(models.Model):
 
 class Service_advisor(models.Model):
     id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=20)
+    name = models.CharField(max_length=20,unique=True)
     password = models.CharField(max_length=20)
 
 class Repair_man(models.Model):
@@ -36,19 +36,27 @@ class User_Vehicle(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE)
 
+# 维修委托书
 class Repair_commission(models.Model):
     id = models.AutoField(primary_key=True)
     principal = models.ForeignKey(User, on_delete=models.CASCADE)
     service_man = models.ForeignKey(Service_advisor,on_delete=models.CASCADE)
     car = models.ForeignKey(Vehicle,on_delete=models.CASCADE)
-    wash = models.BooleanField() # car wash need extra cost
-    material_cost  = models.FloatField()
-    labor_cost = models.FloatField()
-    time = models.DateTimeField() # created time
-    expected_delivery_time = models.DateTimeField()
+    wash = models.BooleanField(default=False)
+    material_cost  = models.FloatField(default=0)
+    labor_cost = models.FloatField(default=0)
+    time = models.DateTimeField(auto_now_add=True)
+    expected_delivery_time = models.IntegerField(default=14)
     is_carried = models.BooleanField(default=False)
     is_paid = models.BooleanField(default=False)
 
+class Vechile_Fault_Info(models.Model):
+    id = models.AutoField(primary_key=True)
+    car = models.ForeignKey(Vehicle, on_delete=models.CASCADE)
+    fault_info = models.CharField(max_length=100)
+    commission_id = models.ForeignKey(Repair_commission, on_delete=models.CASCADE)
+
+# 维修派工单
 class Repair_order(models.Model):
     id = models.AutoField(primary_key=True)
     project = models.CharField(max_length=20)
@@ -57,6 +65,7 @@ class Repair_order(models.Model):
     is_finished = models.BooleanField(default=False)
     repair_commission_id = models.ForeignKey(Repair_commission, on_delete=models.CASCADE)
 
+# 维修项目单
 class Repair_cost(models.Model):
     id = models.AutoField(primary_key=True)
     project = models.CharField(max_length=20)

@@ -91,7 +91,7 @@ WSGI_APPLICATION = 'mysystem.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'test',
+        'NAME': 'ammdb',
         'USER': 'gaussdb',
         'PASSWORD': 'Enmo@123',
         'HOST': '1.94.54.40',

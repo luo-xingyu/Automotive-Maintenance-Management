@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>维修项目管理</title>
+  <link rel="shortcut icon" href="/static/image/favicon.ico" >
   <link rel="stylesheet" href="https://www.w3schools.cn/lib/bootstrap/3.4.1/css/bootstrap.min.css">
   <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" type="text/css">
   <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css">
@@ -28,14 +29,14 @@
         <ul class="nav navbar-nav navbar-right">
             <li><a href="entrust">维修委托</a></li>
             <li><a href="project">维修项目</a></li>
-            <li><a href="service">个人中心</a></li>
+            <li><a href="/service">个人中心</a></li>
             <li><a href="/logout">退出</a></li>   
         </ul>
         </div>
     </div>
 </nav>
 
-<div class="container-fluid">
+<div class="container" style="padding-top: 100px;">
     <div class="header-container">
         <h2 class="header-title"><strong>维修项目管理</strong></h2>
         <button type="button" class="btn" data-toggle="modal" data-target="#myModal">添加维修项目</button>
@@ -134,7 +135,7 @@
                     </div>
                     </div>
                 </div>
-                
+
             </td>
             <td>
                 <form action="project" method="post">

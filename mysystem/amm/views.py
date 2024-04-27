@@ -34,6 +34,7 @@ def entry(request):
         elif role == 'service_man':
             man = models.Service_advisor.objects.filter(name=username).first()
             if man and man.password == password:
+                request.session['username'] = username
                 return redirect('/service/')
             else:
                 context = {}
@@ -136,9 +137,31 @@ def user(request):
 # Module: service_man
 # =============================================================================
 
-# 前台人员个人中心用于修改用户名和密码
 def service(request):
-    return render(request,'service_man/index.html')
+    username = request.session.get('username')
+    if request.method == 'POST':
+        if request.POST.get('action') == 'changename':
+            newname = request.POST.get('name')
+            models.Service_advisor.objects.filter(name=username).update(name=newname)
+            request.session['username'] = newname
+            return redirect('/service/')
+        if request.POST.get('action') == 'changepassword':
+            nowpassword = request.POST.get('currentPassword')
+            newpassword = request.POST.get('newPassword')
+            confirmpwd = request.POST.get('confirmPassword')
+            context = {}
+            storepwd = models.Service_advisor.objects.filter(name=username).first().password
+            if storepwd != nowpassword:
+                context = {'password_error':'password_error','username':username}
+                return render(request,'service_man/index.html',context)
+            if newpassword != confirmpwd:
+                context = {'confirm_error':'confirm_error','username':username}
+                return render(request,'service_man/index.html',context)
+            
+            models.Service_advisor.objects.filter(name=username).update(password=newpassword)
+            return redirect('/logout/')
+        
+    return render(request,'service_man/index.html',{'username':username})
 
 def showProject(request):
     if request.method == 'POST':
@@ -165,3 +188,10 @@ def showProject(request):
     
     repair_project = models.Repair_cost.objects.all()
     return render(request,'service_man/project.html',{'repair_project':repair_project})
+
+def entrust(request):
+    service_name = request.session.get('username')
+    service_id = models.Service_advisor.objects.filter(name=service_name).first().id
+    
+    entrust_list = models.Repair_commission.objects.all()
+    return render(request,'service_man/entrust.html',{'entrust_list':entrust_list})

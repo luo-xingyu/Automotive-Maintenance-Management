@@ -9,15 +9,12 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('logout/', views.userlogout, name='logout'),
 
-    # =============================================================================
     # Module: user
-    # =============================================================================
     path('user/', views.user, name='user'),
 
-    # =============================================================================
     # Module: service_man
-    # =============================================================================
     path('service/', views.service,name='service'),
     path('service/project',views.showProject,name='project'),
+    path('service/entrust',views.entrust,name='entrust'),
 
 ]
