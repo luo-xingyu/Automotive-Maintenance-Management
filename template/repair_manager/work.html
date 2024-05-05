@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>前台管理界面</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="shortcut icon" href="/static/image/favicon.ico" >
+  <link rel="stylesheet" href="https://www.w3schools.cn/lib/bootstrap/3.4.1/css/bootstrap.min.css">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css">
+  <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.5.1.min.js"></script>
+  <script src="https://www.w3schools.cn/lib/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <style>
+    .page-header{border-bottom: 1px solid #e7e9ee; padding-bottom:11.5px;}
+  </style>
+</head>
+<body style="background-color: #f4f5f6;">
+
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+<script type='text/javascript'>
+    var repairProjects = JSON.parse('{{ repair_project | safe }}');
+    var repairMen = JSON.parse('{{ repair_man | safe }}');
+</script>
+
+
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span the="icon-bar"></span>                        
+        </button>
+        <a class="navbar-brand" href="/">汽车维修管理系统</a>
+      </div>
+      <div class="collapse navbar-collapse" id="myNavbar">
+        <ul class="nav navbar-nav navbar-right">
+            <li><a href="work">功能面板</a></li>
+            <li><a href="/repair_manage">个人中心</a></li>
+            <li><a href="/logout">退出</a></li>   
+        </ul>
+      </div>
+    </div>
+</nav>
+
+<div class="container" style="padding-top: 100px;">
+    <div class="header-container">
+        <h2 class="header-title"><strong>待处理委托列表</strong></h2>
+    </div>
+    <br>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+            <th>委托编号</th>
+            <th>委托人</th>
+            <th>车牌号</th>
+            <th>车型</th>
+            <th>故障信息</th>
+            <th>是否洗车</th>
+            <th>操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in entrust_data %}
+        <tr>
+            <td>{{ item.id }}</td>
+            <td>{{ item.principal_name }}</td>
+            <td>{{ item.license_plate }}</td>
+            <td>{{ item.car_type }}</td>
+            <td>{{ item.fault_info }}</td>
+            <td>
+                {% if item.wash %}
+                    是
+                {% else %}
+                    否
+                {% endif %}
+            </td>
+            <td>
+                <!-- <input type="hidden" name="id" value="{{ item.id }}"> -->
+                <!-- <button class="btn btn-danger" name="action" value="assign" type="submit">分配任务</button> -->
+                <button type="button" class="btn" data-toggle="modal" data-target="#assignTask">分配任务</button>
+
+                <!-- 模态 -->
+                <div class="modal fade" id="assignTask" role="dialog">
+                    <div class="modal-dialog modal-lg" style="margin-top: 100px;">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">添加维修项目</h4>
+                        </div>
+                        <div class="modal-body">
+                        <!-- 表单 -->
+                        <form action="work" method="post">
+                            {% csrf_token %}
+                            
+                            <blockquote>
+                                <p>{{ item.fault_info }}</p>
+                                <footer>当前车辆故障</footer>
+                            </blockquote>
+                            
+                            <input type="hidden" name="commission_id" value="{{ item.id }}">
+
+                            <div class="modal-footer">
+                                <div>
+                                    <button type="button" class="btn btn-default" id="addRepairRow">添加任务</button>
+                                    <button type="submit" class="btn" style=" color: #f4511e;">完成分配</button>
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                                </div>
+                            </div>
+
+                        </form>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+
+                <script>
+                    document.getElementById('addRepairRow').addEventListener('click', function() {
+                        var form = document.querySelector('.modal-body form'); 
+                        var newDiv = document.createElement('div');
+
+                        var projectsOptions = repairProjects.map(function(project) {
+                            return `<option value="${project.pk}">${project.fields.project}</option>`;
+                        }).join('');
+
+                        var menOptions = repairMen.map(function(man) {
+                            return `<option value="${man.pk}">${man.fields.name} ${man.fields.job}</option>`;
+                        }).join('');
+
+                        newDiv.innerHTML = `
+                            <div class="row">
+                                <div class="form-group col-md-4">
+                                    <label>维修项目选择:</label>
+                                    <select class="form-control" name="projects[]">
+                                        ${projectsOptions}
+                                    </select>
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label>工时:</label>
+                                    <input type="number" class="form-control" name="times[]" required min="1">
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label>维修员选择:</label>
+                                    <select class="form-control" name="men[]">
+                                        ${menOptions}
+                                    </select>
+                                </div> 
+                            </div>
+                        `;
+                        form.insertBefore(newDiv, form.querySelector('.modal-footer')); 
+                    });
+                    </script>
+                    
+            </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+</div>
+
+<footer class="container-fluid text-center">
+<p>© 2024 Repair Costs Dashboard</p>
+</footer>
+
+</body>
+</html>

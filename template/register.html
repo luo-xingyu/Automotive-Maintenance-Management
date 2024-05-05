@@ -76,7 +76,19 @@
                     <input type="text" class="form-control" name="password" id="password" placeholder="输入密码" required>
                 </div>
                 
-                {%if user_type == 'user' %}
+                {% if user_type == 'repair_man' %}
+                <div class="form-group"> 
+                    <label for="type">工种</label>
+                    <select class="form-control" id="type" name="type">
+                      <option value="机修" checked>机修</option>
+                      <option value="电工">电工</option>
+                      <option value="漆工">漆工</option>
+                      <option value="焊工">焊工</option>
+                    </select>
+                </div>  
+                {% endif %}
+
+                {% if user_type == 'user' %}
                 <div class="form-group">
                     <label for="phone">联系电话</label>
                     <input type="phone" class="form-control" name="phone" id="phone" placeholder="输入电话">

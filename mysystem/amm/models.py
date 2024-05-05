@@ -52,15 +52,14 @@ class Repair_commission(models.Model):
     is_finished = models.BooleanField(default=False)
     is_paid = models.BooleanField(default=False)
 
-
 # 维修派工单
 class Repair_order(models.Model):
     id = models.AutoField(primary_key=True)
     project = models.CharField(max_length=20)
-    work_time = models.DateTimeField()
-    repair_man_id = models.ForeignKey(Repair_man, on_delete=models.CASCADE)
+    work_time = models.IntegerField(default=0)
+    repair_man = models.ForeignKey(Repair_man, on_delete=models.CASCADE)
     is_finished = models.BooleanField(default=False)
-    repair_commission_id = models.ForeignKey(Repair_commission, on_delete=models.CASCADE)
+    repair_commission = models.ForeignKey(Repair_commission, on_delete=models.CASCADE)
 
 # 维修项目单
 class Repair_cost(models.Model):

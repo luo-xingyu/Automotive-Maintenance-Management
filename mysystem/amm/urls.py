@@ -9,9 +9,6 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('logout/', views.userlogout, name='logout'),
 
-    # Module: user
-    path('user/', views.user, name='user'),
-
     # Module: service_man
     path('service/', views.service,name='service'),
     path('service/project',views.showProject,name='project'),
@@ -19,4 +16,8 @@ urlpatterns = [
 
     # function
     path('service/get_cars/',views.get_cars,name='get_cars'),
+
+    # Module: repair_manager
+    path('repair_manage/', views.manageIndex,name='repair_manager'),
+    path('repair_manage/work',views.manageTask,name='manageTask'),
 ]
