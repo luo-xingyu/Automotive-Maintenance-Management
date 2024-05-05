@@ -28,8 +28,8 @@ class Repair_manager(models.Model):
 class Vehicle(models.Model):
     id = models.AutoField(primary_key=True)
     type = models.CharField(max_length=10)
-    license_plate = models.CharField(max_length=10)
-    ident_number = models.CharField(max_length=18)
+    license_plate = models.CharField(max_length=10) # 车牌号
+    ident_number = models.CharField(max_length=18) # 车架号
 
 class User_Vehicle(models.Model):
     id = models.AutoField(primary_key=True)
@@ -42,19 +42,16 @@ class Repair_commission(models.Model):
     principal = models.ForeignKey(User, on_delete=models.CASCADE)
     service_man = models.ForeignKey(Service_advisor,on_delete=models.CASCADE)
     car = models.ForeignKey(Vehicle,on_delete=models.CASCADE)
+    fault_info = models.CharField(max_length=100)
     wash = models.BooleanField(default=False)
     material_cost  = models.FloatField(default=0)
     labor_cost = models.FloatField(default=0)
     time = models.DateTimeField(auto_now_add=True)
     expected_delivery_time = models.IntegerField(default=14)
     is_carried = models.BooleanField(default=False)
+    is_finished = models.BooleanField(default=False)
     is_paid = models.BooleanField(default=False)
 
-class Vechile_Fault_Info(models.Model):
-    id = models.AutoField(primary_key=True)
-    car = models.ForeignKey(Vehicle, on_delete=models.CASCADE)
-    fault_info = models.CharField(max_length=100)
-    commission_id = models.ForeignKey(Repair_commission, on_delete=models.CASCADE)
 
 # 维修派工单
 class Repair_order(models.Model):

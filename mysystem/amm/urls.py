@@ -17,4 +17,6 @@ urlpatterns = [
     path('service/project',views.showProject,name='project'),
     path('service/entrust',views.entrust,name='entrust'),
 
+    # function
+    path('service/get_cars/',views.get_cars,name='get_cars'),
 ]

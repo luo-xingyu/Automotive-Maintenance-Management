@@ -12,8 +12,62 @@
   <script src="https://www.w3schools.cn/lib/bootstrap/3.4.1/js/bootstrap.min.js"></script>
   <style>
     .page-header{border-bottom: 1px solid #e7e9ee; padding-bottom:11.5px;}
-  </style>
+    select {
+      width: 200px; /* 定义宽度 */
+      padding: 10px; /* 内边距 */
+      border: 2px solid #ccc; /* 边框样式 */
+      border-radius: 5px; /* 边框圆角 */
+      background-color: white; /* 背景色 */
+      font-size: 16px; /* 文字大小 */
+      cursor: pointer; /* 鼠标样式 */
+    }
+
+    /* 鼠标悬停时的样式 */
+    select:hover {
+        border-color: #888;
+    }
+
+    /* 聚焦时的样式 */
+    select:focus {
+        border-color: #0056b3;
+        outline: none; /* 去除默认的焦点框 */
+    }
+    select{
+      width: 33%;
+      padding: 8px;
+      margin-top: 8px;
+      margin-bottom: 16px;
+      display: inline-block;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box; /* Add responsiveness to padding and borders */
+    }
+    textarea{
+      width: 100%;
+      padding: 16px;
+      margin-top: 8px;
+      margin-bottom: 16px;
+      display: inline-block;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box; /* Add responsiveness to padding and borders */
+    }
+    .form-group label,
+    .form-group select {
+        display: block; /* Makes each element block-level, thus occupying the full width */
+        width: 100%;
+        margin-bottom: 5px; /* Adds some space below each element */
+    }
+
+    .form-group select {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+    </style>
 </head>
+
+
 <body style="background-color: #f4f5f6;">
 
 {% load static %}
@@ -55,23 +109,72 @@
                 </div>
                 <div class="modal-body">
                 <!-- 表单 -->
-                <form action="entrust" method="post">
-                    {% csrf_token %}
-                    <input type="hidden" name="action" value="add">
-                    
-                    <!-- 填入信息 -->
-                    <div class="modal-footer">
-                        <div>
-                            <button type="submit" class="btn" style=" color: #f4511e;">添加</button>
-                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                  <form action="entrust" method="post">
+                      {% csrf_token %}
+          
+                      <input type="hidden" name="action" value="add">
+
+                      <div class="row" style="padding: 8px;">
+                        <div class="col-sm-4 form-group">
+                          <label for="customer_select">选择委托人</label>
+                          <select id="customer_select" name="customer_id">
+                            <option value="#">请选择委托人</option>
+                            {% for customer in user_list %}
+                            <option value="{{ customer.id }}">{{ customer.user_name }}</option>
+                            {% endfor %}
+                          </select>
                         </div>
-                    </div>
-                </form>
+                        
+                        <div class="col-sm-4 form-group">
+                          <label for="car_select">选择车辆</label>
+                          <select id="car_select" name="car_id">
+                              <option value="#">请选择车辆</option>
+                          </select>
+                        </div>
+
+                        <div class="col-sm-4 form-group">
+                        <label for="car_wash">是否洗车</label>
+                          <select id="car_wash" name="wash">
+                            <option value="#">是否洗车</option>
+                            <option value="1">是</option>
+                            <option value="0">否</option>
+                        </select>
+                        </div>
+                        
+                      </div>
+                      
+                      <br>
+                      <label for="fault_description">故障描述</label>
+                      <textarea name="fault_description" rows="4" placeholder="请输入故障描述"></textarea>              
+                    
+                      <div class="modal-footer">
+                          <div>
+                              <button type="submit" class="btn" style=" color: #f4511e;">添加</button>
+                              <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                          </div>
+                      </div>
+
+                  </form>
                 </div>
             </div>
             </div>
         </div>
-        
+
+        <script>
+          document.getElementById('customer_select').addEventListener('change', function() {
+              var customerId = this.value;
+              fetch(`/service/get_cars?customer_id=${customerId}`)
+                  .then(response => response.json())
+                  .then(data => {
+                      var carSelect = document.getElementById('car_select');
+                      carSelect.innerHTML = '<option value="#">请选择车辆</option>';
+                      data.forEach(car => {
+                          carSelect.innerHTML += `<option value="${car.id}">${car.id} ${car.license_plate}</option>`;
+                      });
+                  });
+          });
+        </script>
+
     </div>
     <br>
     <table class="table table-striped">
@@ -83,16 +186,21 @@
         </tr>
       </thead>
       <tbody>
-        {% for item in entrust_list %}
+        {% for item in entrust_data %}
         <tr>
             <td>{{ item.id }}</td>
-            <td>{{ item.principal }}</td>
-            <td>{{ item.car }}</td>
+            <td>{{ item.principal_name }}</td>
+            <td>{{ item.license_plate }}</td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
 </div>
+
+
+<footer class="container-fluid text-center">
+  <p>© 2024 Repair Commission Dashboard</p>
+</footer>
 
 </body>
 </html>

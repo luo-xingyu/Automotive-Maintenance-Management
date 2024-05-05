@@ -1,6 +1,8 @@
 from django.shortcuts import render,redirect
 from . import models
 from django.contrib.auth import logout
+from django.http import JsonResponse
+from django.db.models import Prefetch
 
 def home(request):
     return render(request,'home.html')
@@ -192,6 +194,47 @@ def showProject(request):
 def entrust(request):
     service_name = request.session.get('username')
     service_id = models.Service_advisor.objects.filter(name=service_name).first().id
+    user_list = models.User.objects.all()
+    # entrust_list = models.Repair_commission.objects.all()
     
-    entrust_list = models.Repair_commission.objects.all()
-    return render(request,'service_man/entrust.html',{'entrust_list':entrust_list})
+    entrust_list = models.Repair_commission.objects.prefetch_related(
+        Prefetch('car', queryset=models.Vehicle.objects.all()),
+        Prefetch('principal', queryset=models.User.objects.all())
+    )
+    
+    entrust_data = []
+    for entrust in entrust_list:
+        entrust_info = {
+            'id': entrust.id,
+            'license_plate': entrust.car.license_plate if entrust.car else 'No Car Info',
+            'principal_name': entrust.principal.user_name if entrust.principal else 'No Principal Info',
+            'fault_info': entrust.fault_info,
+            'material_cost': entrust.material_cost,
+            'labor_cost': entrust.labor_cost
+        }
+        entrust_data.append(entrust_info)
+
+    info_list =  {'user_list':user_list,'entrust_data':entrust_data}
+    if request.method == 'POST':
+        if request.POST.get('action') == 'add':
+            user_id = request.POST.get('customer_id')
+            car_id = request.POST.get('car_id')
+            wash = request.POST.get('wash')
+            error_info = request.POST.get('fault_description')
+            print("we get here:",user_id,car_id,wash,error_info)
+            commission = models.Repair_commission.objects.create(principal_id=user_id,
+                                                                 service_man_id=service_id,
+                                                                 car_id=car_id,
+                                                                 fault_info=error_info,
+                                                                 wash=wash)
+            commission.save()
+            return redirect('/service/entrust')
+
+    return render(request,'service_man/entrust.html',info_list)
+
+
+def get_cars(request):
+    user_id = request.GET.get('customer_id')
+    car = models.User_Vehicle.objects.filter(user_id=user_id)
+    car_list = [{'id':item.vehicle_id,'license_plate':models.Vehicle.objects.filter(id=item.vehicle_id).first().license_plate} for item in car]
+    return JsonResponse(car_list,safe=False)
