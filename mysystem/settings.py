@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-gqk=shjay3ltisipnxvf0oo%(-+#b&$i(3ou@v@klk6wn76svz
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*","1.94.54.40","app6321.acapp.acwing.com.cn"]
 
 
 # Application definition
@@ -38,8 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders', # 解决跨域访问
     'amm',
 ]
+#CORS_ALLOW_ALL_ORIGINS = True
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -49,7 +51,19 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    #'corsheaders.middleware.CorsMiddleware',#解决跨域访问
+    #'django.middleware.common.CommonMiddleware',#解决跨域访问
 ]
+
+# SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+# SESSION_COOKIE_NAME  = "sessionid"
+# SESSION_COOKIE_PATH  = "/"
+# SESSION_COOKIE_DOMAIN = None
+# SESSION_COOKIE_SECURE = False
+# SESSION_COOKIE_HTTPONLY = True
+# SESSION_COOKIE_AGE = 1209600
+# SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+# SESSION_SAVE_EVERY_REQUEST = False
 
 ROOT_URLCONF = 'mysystem.urls'
 
@@ -135,11 +149,49 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
+STATIC_ROOT = os.path.join(BASE_DIR,'static')
 STATIC_URL = '/static/'
-
 STATICFILES_DIRS = [
     os.path.join(ROOT_DIR, 'static'),
 ]
+
+# media
+MEDIA_URL = "/media/"  # 自定义
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # 自定义
+if os.path.isdir(MEDIA_ROOT) == False:
+    os.mkdir(MEDIA_ROOT)
+
+# ALIPAY_APP_ID = ''
+# APP_PRIVATE_KEY_STRING = open('{}/util/alipay_key/app_private_2048.txt'.format(BASE_DIR)).read()
+# ALIPAY_PUBLIC_KEY_STRING = open('{}/util/alipay_key/alipay_public_2048.txt'.format(BASE_DIR)).read()
+# ALIPAY_SIGN_TYPE = 'RSA2'
+
+# #跨域增加忽略
+# CORS_ALLOW_CREDENTIALS = True
+# CORS_ORIGIN_ALLOW_ALL = True
+# CORS_ORIGIN_WHITELIST = ()
+#  # 对应的发送的请求的跨域
+# CORS_ALLOW_METHODS = (
+#     'DELETE',
+#     'GET',
+#     'OPTIONS',
+#     'PATCH',
+#     'POST',
+#     'PUT',
+#     'VIEW',
+# )
+ 
+# CORS_ALLOW_HEADERS = (
+#     'accept',
+#     'accept-encoding',
+#     'authorization',
+#     'content-type',
+#     'dnt',
+#     'origin',
+#     'user-agent',
+#     'x-csrftoken',
+#     'x-requested-with',
+# )
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
