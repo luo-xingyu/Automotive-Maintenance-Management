@@ -31,14 +31,13 @@ ALLOWED_HOSTS = ["*","1.94.54.40","app6321.acapp.acwing.com.cn"]
 # Application definition
 
 INSTALLED_APPS = [
-    'simpleui',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'corsheaders', # 解决跨域访问
+    'corsheaders',
     'amm',
 ]
 #CORS_ALLOW_ALL_ORIGINS = True
