@@ -22,5 +22,6 @@ urlpatterns = [
     path('repair_manage/work',views.manageTask,name='manageTask'),
 
     # Module: user
-    # path('user_login/',views.user_login,name="user_login")
+    path('user_login/',views.user_login,name="user_login"),
+    path('get_csrf/',views.get_csrf,name="get_csrf")
 ]

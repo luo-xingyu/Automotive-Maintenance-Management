@@ -88,18 +88,6 @@ WSGI_APPLICATION = 'mysystem.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-# local
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'amm',
-#         'USER': 'gaussdb',
-#         'PASSWORD': 'Enmo@123',
-#         'HOST': 'localhost',
-#         'PORT': '5432',
-#     }
-# }
-
 # Cloud Server
 DATABASES = {
     'default': {
@@ -159,6 +147,11 @@ MEDIA_URL = "/media/"  # 自定义
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # 自定义
 if os.path.isdir(MEDIA_ROOT) == False:
     os.mkdir(MEDIA_ROOT)
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://servicewechat.com',
+]
+
 
 # ALIPAY_APP_ID = ''
 # APP_PRIVATE_KEY_STRING = open('{}/util/alipay_key/app_private_2048.txt'.format(BASE_DIR)).read()

@@ -4,6 +4,7 @@ from django.contrib.auth import logout
 from django.http import JsonResponse
 from django.db.models import Prefetch
 from django.core import serializers
+from django.middleware.csrf import get_token
 import json
 
 def home(request):
@@ -318,3 +319,24 @@ def manageTask(request):
         return redirect('/repair_manage/work')
 
     return render(request,'repair_manager/work.html',data)
+
+# wechat applet
+def user_login(request):
+    if request.method == "GET":
+        username = request.GET.get('username')
+        password = request.GET.get('password')
+        role = request.GET.get('role')
+        if role == "user":
+            user = models.User.objects.filter(user_name=username,user_password=password).first()
+            if user:
+                return JsonResponse({'status': 'success', 'message': '登录成功'})
+            else:
+                return JsonResponse({'status': 'fail', 'message': '用户名或密码错误'})
+            
+        elif role == "repairman":
+            repairpeople = models.Repair_man.objects.filter(name=username,password=password).first()
+            if repairpeople:
+                return JsonResponse({'status': 'success', 'message': '登录成功'})
+            else:
+                return JsonResponse({'status': 'fail', 'message': '用户名或密码错误'})
+       
