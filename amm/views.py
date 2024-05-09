@@ -318,3 +318,7 @@ def manageTask(request):
         return redirect('/repair_manage/work')
 
     return render(request,'repair_manager/work.html',data)
+
+
+def user_login(request):
+    

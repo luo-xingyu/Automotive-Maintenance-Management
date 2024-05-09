@@ -20,4 +20,7 @@ urlpatterns = [
     # Module: repair_manager
     path('repair_manage/', views.manageIndex,name='repair_manager'),
     path('repair_manage/work',views.manageTask,name='manageTask'),
+
+    # Module: user
+    path('user_login/',views.user_login,name="user_login")
 ]
