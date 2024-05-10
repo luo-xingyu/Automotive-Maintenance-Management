@@ -60,6 +60,7 @@ class Repair_order(models.Model):
     repair_man = models.ForeignKey(Repair_man, on_delete=models.CASCADE)
     is_finished = models.BooleanField(default=False)
     repair_commission = models.ForeignKey(Repair_commission, on_delete=models.CASCADE)
+    # no = models.IntegerField(default=0) 1 2 3 4 5 ...
 
 # 维修项目单
 class Repair_cost(models.Model):

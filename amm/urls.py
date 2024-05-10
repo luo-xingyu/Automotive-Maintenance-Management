@@ -4,6 +4,7 @@ from . import views
 app_name = 'amm'
 
 urlpatterns = [
+    # web #
     path('', views.home, name='home'),
     path('entry/', views.entry, name='entry'), 
     path('register/', views.register, name='register'),
@@ -21,7 +22,15 @@ urlpatterns = [
     path('repair_manage/', views.manageIndex,name='repair_manager'),
     path('repair_manage/work',views.manageTask,name='manageTask'),
 
+    # wechat applet #
+
     # Module: user
     path('user_login/',views.user_login,name="user_login"),
-    path('get_csrf/',views.get_csrf,name="get_csrf")
+    path('user_managecar/',views.user_managecar,name='user_managecar'),
+    # path('user_progressquery',views.progressquery,name='user_progressquery'),
+    # path('user_home/',views.user_home,name='user_home'),
+    
+    # Module: repair_man
+    # path('repair_man_work/'),
+    # path('repair_man_home')
 ]

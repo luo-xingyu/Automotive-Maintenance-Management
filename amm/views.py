@@ -333,10 +333,23 @@ def user_login(request):
             else:
                 return JsonResponse({'status': 'fail', 'message': '用户名或密码错误'})
             
-        elif role == "repairman":
+        elif role == "repair_man":
             repairpeople = models.Repair_man.objects.filter(name=username,password=password).first()
             if repairpeople:
                 return JsonResponse({'status': 'success', 'message': '登录成功'})
             else:
                 return JsonResponse({'status': 'fail', 'message': '用户名或密码错误'})
-       
+
+def user_managecar(request):
+    if request.method == "GET":
+        action = request.GET.get('action')
+        if action == "add":
+            type = request.GET.get('type')
+            license_plate = request.GET.get('license_plate')
+            ident_number = request.GET.get('ident_number')
+            # create veh
+        elif action == "delete":
+            ident_number = request.GET.get()
+            
+
+    
