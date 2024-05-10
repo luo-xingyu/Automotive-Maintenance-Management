@@ -343,13 +343,99 @@ def user_login(request):
 def user_managecar(request):
     if request.method == "GET":
         action = request.GET.get('action')
-        if action == "add":
+        username = request.GET.get('username')
+        if action == "inquire":
+            user = models.User.objects.filter(user_name=username).first()
+            user_vehicle = models.User_Vehicle.objects.filter(user=user).all()
+            car_list = [{   'type': vehicle.vehicle.type,
+                            'license_plate': vehicle.vehicle.license_plate,
+                            'ident_number': vehicle.vehicle.ident_number
+                        } for vehicle in user_vehicle ]
+                        
+            return JsonResponse(car_list,safe=False)
+        elif action == "add":
             type = request.GET.get('type')
             license_plate = request.GET.get('license_plate')
             ident_number = request.GET.get('ident_number')
-            # create veh
+            vehicle = models.Vehicle.objects.create(type=type,license_plate=license_plate,ident_number=ident_number)
+            vehicle.save()
+            user = models.User.objects.filter(user_name=username).first()
+            user_vehicle = models.User_Vehicle.objects.create(user=user,vehicle=vehicle)
+            user_vehicle.save() 
+            return JsonResponse({'status': 'success', 'message': '添加成功'})
+        
         elif action == "delete":
-            ident_number = request.GET.get()
-            
+            ident_number = request.GET.get('ident_number')
+            vehicle = models.Vehicle.objects.filter(ident_number=ident_number).first()
+            vehicle.delete()
+            return JsonResponse({'status': 'success', 'message': '删除成功'})
+        
 
+# 主要查询未支付的维修委托进度
+def progressquery(request):
+    username = request.GET.get('username')
+    user = models.User.objects.filter(user_name=username).first()
+    entrust_list = models.Repair_commission.objects.filter(principal=user,ispaid=False).all()
+    entrust_data = []
+    for item in entrust_list:
+        orders = models.Repair_order.objects.filter(repair_commission=item).all()
+        order_progress = []
+        for order in orders:
+            order_info = {
+                'project': order.project,
+                'progress':order.is_finished,
+            }
+            order_progress.append(order_info)
+
+        entrust_data.append(order_progress)
+    return JsonResponse(entrust_data,safe=False)
+
+def get_commissionhistory(request):
+    username = request.GET.get('username')
+    user = models.User.objects.filter(user_name=username).first()
+    entrust_list = models.Repair_commission.objects.filter(principal=user).all()
+    entrust_data = []
+    for item in entrust_list:
+        entrust_info = {
+            'id': item.id,
+            'fault_info': item.fault_info,
+            'material_cost': item.material_cost,
+            'labor_cost': item.labor_cost,
+            'time': item.time,
+            'expected_delivery_time': item.expected_delivery_time,
+            'is_carried': item.is_carried,
+            'is_finished': item.is_finished,
+            'is_paid': item.is_paid
+        }
+        entrust_data.append(entrust_info)
+    return JsonResponse(entrust_data,safe=False)
     
+
+def pay(requset):
+    commission_id = requset.GET.get('commission_id')
+    models.Repair_commission.objects.filter(id=commission_id).update(is_paid=True)
+    return JsonResponse({'status': 'success', 'message': '支付成功'})
+
+
+# repair_man
+def get_order(request):
+    username = request.GET.get('username')
+    repair_man = models.Repair_man.objects.filter(name=username).first()
+    task = models.Repair_order.objects.filter(repair_man=repair_man).all()
+    task_list = []
+    for item in task:
+        if item.is_finished:
+            continue
+        task_info = {
+            'id': item.id,
+            'project': item.project,
+            'work_time': item.work_time,
+            'is_finished': item.is_finished
+        }
+        task_list.append(task_info)
+    return JsonResponse(task_list,safe=False)
+
+def repair_finsh(requets):
+    id = requets.GET.get('id')
+    models.Repair_order.objects.filter(id=id).update(is_finished=True)
+    return JsonResponse({'status': 'success', 'message': '维修完成'})

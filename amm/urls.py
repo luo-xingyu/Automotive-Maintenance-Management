@@ -27,10 +27,11 @@ urlpatterns = [
     # Module: user
     path('user_login/',views.user_login,name="user_login"),
     path('user_managecar/',views.user_managecar,name='user_managecar'),
-    # path('user_progressquery',views.progressquery,name='user_progressquery'),
-    # path('user_home/',views.user_home,name='user_home'),
+    path('user_progressquery',views.progressquery,name='user_progressquery'),
+    path('user_commissionhistory',views.get_commissionhistory,name='user_commissionhistory'),
+    path('user_pay',views.pay,name='user_pay'),
     
     # Module: repair_man
-    # path('repair_man_work/'),
-    # path('repair_man_home')
+    path('repair_getorder/',views.get_order,name='getorder'),
+    path('repair_finish/',views.repair_finsh,name='repair_finish'),
 ]
