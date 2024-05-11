@@ -340,6 +340,7 @@ def user_login(request):
             else:
                 return JsonResponse({'status': 'fail', 'message': '用户名或密码错误'})
 
+
 def user_managecar(request):
     if request.method == "GET":
         action = request.GET.get('action')
@@ -371,15 +372,35 @@ def user_managecar(request):
             return JsonResponse({'status': 'success', 'message': '删除成功'})
         
 
-# 主要查询未支付的维修委托进度
-def progressquery(request):
+# details of commission
+def commission(request):
     username = request.GET.get('username')
     user = models.User.objects.filter(user_name=username).first()
-    entrust_list = models.Repair_commission.objects.filter(principal=user,ispaid=False).all()
-    entrust_data = []
+    entrust = models.Repair_commission.objects.filter(principal=user,is_paid=False).all()
+    entrust_list = []
+    for item in entrust:
+        car_license = models.Vehicle.objects.filter(id=item.car.id).first().license_plate
+        info = {
+            'id':item.id,
+            'car_license_plate':car_license,
+            'fault_info':item.fault_info,
+            'material_cost': item.material_cost,
+            'labor_cost':item.labor_cost,
+            'create_time':item.time,
+            'expected_delivery_time':item.expected_delivery_time,
+            'is_carried':item.is_carried,
+            'is_finshed':item.is_finished,
+        }
+        entrust_list.append(info)
+    return JsonResponse(entrust_list,safe=False)
+
+# inquire progress
+def progressquery(request):
+    entrust_id = request.GET.get('entrust_id')
+    entrust_list = models.Repair_commission.objects.filter(id=entrust_id).all()
+    order_progress = []
     for item in entrust_list:
         orders = models.Repair_order.objects.filter(repair_commission=item).all()
-        order_progress = []
         for order in orders:
             order_info = {
                 'project': order.project,
@@ -387,8 +408,8 @@ def progressquery(request):
             }
             order_progress.append(order_info)
 
-        entrust_data.append(order_progress)
-    return JsonResponse(entrust_data,safe=False)
+    return JsonResponse(order_progress,safe=False)
+
 
 def get_commissionhistory(request):
     username = request.GET.get('username')
@@ -416,7 +437,6 @@ def pay(requset):
     models.Repair_commission.objects.filter(id=commission_id).update(is_paid=True)
     return JsonResponse({'status': 'success', 'message': '支付成功'})
 
-
 # repair_man
 def get_order(request):
     username = request.GET.get('username')
@@ -435,7 +455,21 @@ def get_order(request):
         task_list.append(task_info)
     return JsonResponse(task_list,safe=False)
 
-def repair_finsh(requets):
-    id = requets.GET.get('id')
-    models.Repair_order.objects.filter(id=id).update(is_finished=True)
+
+def repair_finsh(request):
+    id = request.GET.get('id')
+    repair_order = models.Repair_order.objects.filter(id=id).first()
+    repair_order.is_finished=True
+    repair_order.save()
+    commission = models.Repair_commission.objects.filter(id=repair_order.repair_commission.id).first()
+    orders = models.Repair_order.objects.filter(repair_commission=commission)    
+    all_finish = True
+    for item in orders:
+        if item.is_finished == False:
+            all_finish=False
+            break
+    if all_finish:
+        commission.is_finished=True
+        commission.save()
+
     return JsonResponse({'status': 'success', 'message': '维修完成'})

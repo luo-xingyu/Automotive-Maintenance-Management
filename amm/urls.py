@@ -27,9 +27,10 @@ urlpatterns = [
     # Module: user
     path('user_login/',views.user_login,name="user_login"),
     path('user_managecar/',views.user_managecar,name='user_managecar'),
-    path('user_progressquery',views.progressquery,name='user_progressquery'),
-    path('user_commissionhistory',views.get_commissionhistory,name='user_commissionhistory'),
-    path('user_pay',views.pay,name='user_pay'),
+    path('user_commission/',views.commission,name='user_commission'),
+    path('user_progressquery/',views.progressquery,name='user_progressquery'),
+    path('user_commissionhistory/',views.get_commissionhistory,name='user_commissionhistory'),
+    path('user_pay/',views.pay,name='user_pay'),
     
     # Module: repair_man
     path('repair_getorder/',views.get_order,name='getorder'),

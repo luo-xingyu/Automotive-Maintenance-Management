@@ -6,8 +6,9 @@ A B/S-based automobile maintenance management system developed based on the dome
 ## Project Configuration/Use OpenGauss like PostgreSQL
 Environment: 
 - OS : Ubuntu 23.10
-- Python : 3.12.2
+- Python : 3.8.10
 - Django : 3.2
+- Wechat-devtools : Stable 1.06
 
 For the python library version, please refer to requirements.txt.
 ### Install Docker In Your Linux
