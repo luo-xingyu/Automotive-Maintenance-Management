@@ -1,0 +1,40 @@
+<!-- manage.wxml -->
+<navigation-bar title="维修驿站" back="{{false}}" color="black" background="#FFF"></navigation-bar>
+
+<view class="container">
+  <view class="title">车辆信息列表</view>
+  <view class="header">
+    <view class="header-item">车型</view>
+    <view class="header-item">车牌号</view>
+    <view class="header-item">车架号</view>
+    <view class="header-item">操作</view>
+  </view>
+
+  <block wx:for="{{vehicles}}" wx:key="unique">
+    <view class="row">
+      <view class="cell">{{item.type}}</view>
+      <view class="cell">{{item.license_plate}}</view>
+      <view class="cell">{{item.ident_number}}</view>
+      <view class="cell">
+        <button data-id="{{item.id}}" bindtap="deleteVehicle">删除</button>
+      </view>
+    </view>
+  </block>
+
+  <button bindtap="openModal">添加车辆</button>
+  <view class="modal" hidden="{{!isModalOpen}}">
+    <view class="modal-content">
+      <view class="modal-title">添加新车辆</view>
+      <form bindsubmit="submitForm">
+        <picker mode="selector" range="{{Types}}" bindchange="pickerChange">
+          <view>选择车辆类型: {{selectedType}}</view>
+        </picker>
+        <input name="license_plate" placeholder="输入车牌号"/>
+        <input name="ident_number" placeholder="输入车架号"/>
+        <button formType="submit">提交</button>
+        <button bindtap="closeModal">取消</button>
+      </form>
+    </view>
+  </view>
+
+</view>

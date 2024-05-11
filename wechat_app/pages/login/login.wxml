@@ -1,0 +1,17 @@
+<view class="container">
+    <view class="form-item">
+        <input type="text" placeholder="请输入用户名" bindinput="bindUsernameInput"/>
+    </view>
+    <view class="form-item">
+        <input type="password" placeholder="请输入密码" bindinput="bindPasswordInput"/>
+    </view>
+    <radio-group class="form-item" bindchange="bindRoleSelect">
+        <label class="radio-label">用户
+            <radio value="user" checked="true"/> 
+        </label>
+        <label class="radio-label">维修师
+            <radio value="repair_man"/> 
+        </label>
+    </radio-group>
+    <button bindtap="login">登录</button>
+</view>
