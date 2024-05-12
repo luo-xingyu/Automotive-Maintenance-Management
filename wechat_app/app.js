@@ -1,2 +1,13 @@
 // app.js
-App({ })
+App({ 
+    onLaunch:function() 
+    {
+        wx.clearStorageSync();
+    },
+
+    globalData:
+    {
+        userType:null
+    },
+    
+})

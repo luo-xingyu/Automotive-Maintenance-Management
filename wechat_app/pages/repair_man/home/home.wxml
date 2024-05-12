@@ -4,3 +4,6 @@
     维修人员界面
   </view>
 </scroll-view>
+<custom-tab-bar selected="{{selectedTabIndex}}"></custom-tab-bar>
+
+

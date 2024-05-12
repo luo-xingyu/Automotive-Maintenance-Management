@@ -1,5 +1,3 @@
-const app = getApp();
-
 Page({
     data: {
         username: '',
@@ -47,16 +45,22 @@ Page({
                     });
                     
                     wx.setStorageSync('username', username);
+                    
+                    getApp().globalData.userType = role;
 
                     if (role === 'user') {
                         wx.redirectTo({
-                            url: '/pages/user/manage/manage'
+                            url: '/pages/user/inquire/inquire'
                         });
                     }
                     else if (role === 'repair_man'){
-                        wx.redirectTo({
-                            url: '/pages/repair_man/home/home'
-                        });
+                        wx.switchTab({
+                            url: '/pages/repair_man/work/work'
+                          });
+                          
+                        // wx.redirectTo({
+                        //     url: '/pages/repair_man/work/work'
+                        // });
                     }
                     
                 } 

@@ -1,0 +1,10 @@
+/* pages/repairman/repairman.wxss */
+.container {
+    padding: 10px;
+}
+
+.task-item {
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+}

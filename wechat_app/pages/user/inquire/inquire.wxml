@@ -1,0 +1,16 @@
+<navigation-bar title="维修驿站" back="{{false}}" color="black" background="#FFF"></navigation-bar>
+
+<view class="container">
+    <h1>委托列表</h1>
+    <block wx:for="{{entrusts}}" wx:key="id">
+        <view class="list-item">
+            <view class="entrust-info">
+                委托ID: {{item.id}}, 车牌号：{{item.car_license_plate}}
+            </view>
+            <view class="action-buttons">
+                <button wx:if="{{!item.is_finished}}" data-entrust-id="{{item.id}}" bindtap="queryProgress">进度查询</button>
+                <button wx:if="{{item.is_finished}}" data-entrust-id="{{item.id}}" bindtap="payForEntrust">支付</button>
+            </view>
+        </view>
+    </block>
+</view>

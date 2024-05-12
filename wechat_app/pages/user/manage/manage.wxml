@@ -2,8 +2,12 @@
 <navigation-bar title="维修驿站" back="{{false}}" color="black" background="#FFF"></navigation-bar>
 
 <view class="container">
-  <view class="title">车辆信息列表</view>
   <view class="header">
+    <view class="title">车辆信息列表</view>
+    <button class="add-button" bindtap="openModal">添加车辆</button>
+  </view>
+
+  <view class="list-header">
     <view class="header-item">车型</view>
     <view class="header-item">车牌号</view>
     <view class="header-item">车架号</view>
@@ -16,12 +20,11 @@
       <view class="cell">{{item.license_plate}}</view>
       <view class="cell">{{item.ident_number}}</view>
       <view class="cell">
-        <button data-id="{{item.id}}" bindtap="deleteVehicle">删除</button>
+        <button data-ident_number="{{item.ident_number}}" bindtap="deleteVehicle">删除</button>
       </view>
     </view>
   </block>
 
-  <button bindtap="openModal">添加车辆</button>
   <view class="modal" hidden="{{!isModalOpen}}">
     <view class="modal-content">
       <view class="modal-title">添加新车辆</view>
@@ -38,3 +41,4 @@
   </view>
 
 </view>
+
