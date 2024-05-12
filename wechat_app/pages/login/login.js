@@ -46,21 +46,19 @@ Page({
                     
                     wx.setStorageSync('username', username);
                     
-                    getApp().globalData.userType = role;
-
                     if (role === 'user') {
-                        wx.redirectTo({
+                        getApp().globalData.userType = 'user';
+                        //console.log(getApp().globalData.userType)
+                        wx.switchTab({
                             url: '/pages/user/inquire/inquire'
                         });
                     }
                     else if (role === 'repair_man'){
+                        getApp().globalData.userType = 'repairman';
+                        //console.log(getApp().globalData.userType)
                         wx.switchTab({
                             url: '/pages/repair_man/work/work'
                           });
-                          
-                        // wx.redirectTo({
-                        //     url: '/pages/repair_man/work/work'
-                        // });
                     }
                     
                 } 

@@ -7,7 +7,14 @@ Page({
         this.username = wx.getStorageSync('username');
     },
     
-    Show:function(options) {
-        
+    onShow:function(options) {
+        console.log( this.getTabBar() + 'home');
+        this.getTabBar().updateTabs(); 
+        if (typeof this.getTabBar === 'function' &&
+            this.getTabBar()) {
+            this.getTabBar().setData({
+                selected: 1
+            })
+        }
     }
 });

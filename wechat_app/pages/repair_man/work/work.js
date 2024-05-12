@@ -13,6 +13,14 @@ Page({
 
     onShow: function(){
         this.fetchTasks();
+        console.log( this.getTabBar() + 'work');
+        this.getTabBar().updateTabs(); 
+        if (typeof this.getTabBar === 'function' &&
+            this.getTabBar()) {
+            this.getTabBar().setData({
+                selected: 0
+            })
+        }
     },
 
     fetchTasks: function() 

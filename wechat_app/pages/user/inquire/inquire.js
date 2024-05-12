@@ -9,6 +9,17 @@ Page({
         this.fetchEntrusts();
     },
 
+    onShow:function(options) {
+        console.log( this.getTabBar() + 'home');
+        this.getTabBar().updateTabs(); 
+        if (typeof this.getTabBar === 'function' &&
+            this.getTabBar()) {
+            this.getTabBar().setData({
+                selected: 0
+            })
+        }
+    },
+
     fetchEntrusts: function() {
         var that = this;
         wx.request({
