@@ -14,9 +14,6 @@ def userlogout(request):
     logout(request)
     return redirect('/entry/')
 
-# =============================================================================
-# Module: login
-# =============================================================================
 
 def entry(request):
     if request.method == 'POST':
@@ -52,9 +49,6 @@ def entry(request):
 
     return render(request,'entry.html')
 
-# =============================================================================
-# Module: register
-# =============================================================================
 
 def register(request):
     if request.method == 'GET':
@@ -110,13 +104,6 @@ def register(request):
         return redirect('/entry/')
     
     return render(request,'register.html')
-
-# =============================================================================
-# Module: user
-# =============================================================================
-
-def user(request):
-    return render(request,'user/index.html')
 
 # =============================================================================
 # Module: service_man
@@ -193,7 +180,9 @@ def entrust(request):
             'principal_name': entrust.principal.user_name if entrust.principal else 'No Principal Info',
             'fault_info': entrust.fault_info,
             'material_cost': entrust.material_cost,
-            'labor_cost': entrust.labor_cost
+            'labor_cost': entrust.labor_cost,
+            'is_carried': entrust.is_carried,
+            'is_finished': entrust.is_finished,
         }
         entrust_data.append(entrust_info)
 
@@ -215,6 +204,29 @@ def entrust(request):
     return render(request,'service_man/entrust.html',info_list)
 
 
+def entrust_delete(request):
+    entrust_id = request.GET.get('id')
+    models.Repair_commission.objects.filter(id=entrust_id).delete()
+    return redirect('/service/entrust')
+
+
+def entrust_details(request):
+    entrust_id = request.GET.get('id')
+    entrust = models.Repair_commission.objects.filter(id=entrust_id).first()
+    print(entrust_id,entrust)
+    entrust_info = {
+        'id': entrust.id,
+        'car_license_plate': entrust.car.license_plate,
+        'principal_name': entrust.principal.user_name,
+        'fault_info': entrust.fault_info,
+        'material_cost': entrust.material_cost,
+        'labor_cost': entrust.labor_cost,
+        'is_carried': entrust.is_carried,
+        'is_finished': entrust.is_finished,
+        'is_paid': entrust.is_paid
+    }
+    return render(request,'service_man/details.html',entrust_info)
+
 def get_cars(request):
     user_id = request.GET.get('customer_id')
     car = models.User_Vehicle.objects.filter(user_id=user_id)
@@ -225,6 +237,7 @@ def get_cars(request):
 # =============================================================================
 # Module: repair_manager
 # =============================================================================
+
 
 def manageIndex(request):
     username = request.session.get('username')

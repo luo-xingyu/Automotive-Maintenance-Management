@@ -183,6 +183,10 @@
             <th>编号</th>
             <th>委托人</th>
             <th>车牌号</th>
+            <th>承接情况<th>
+            <th>维修情况</th>
+            <th>支付情况</th>
+            <th>操作</th>
         </tr>
       </thead>
       <tbody>
@@ -191,6 +195,34 @@
             <td>{{ item.id }}</td>
             <td>{{ item.principal_name }}</td>
             <td>{{ item.license_plate }}</td>
+            <td>
+                {% if item.is_carried == False %}
+                未承接
+                {% else %}
+                已承接
+                {% endif %}
+            </td>
+            <td>
+                {% if item.is_finished == False %}
+                未完成
+                {% else %}
+                已完成
+                {% endif %}
+            </td>
+            <td>
+                {% if item.is_paid == False %}
+                未支付
+                {% else %}
+                已支付
+                {% endif %}
+            </td>
+            <td>
+                {% if item.is_carried == False %}
+                <a href="entrust_delete?id={{ item.id }}">删除</a>
+                {% else %}
+                <a href="entrust_details?id={{ item.id }}">查看详情</a>
+                {% endif %}
+            </td>
         </tr>
         {% endfor %}
       </tbody>

@@ -14,7 +14,9 @@ urlpatterns = [
     path('service/', views.service,name='service'),
     path('service/project',views.showProject,name='project'),
     path('service/entrust',views.entrust,name='entrust'),
-
+    path('service/entrust_delete',views.entrust_delete,name='entrust_delete'),
+    path('service/entrust_details',views.entrust_details,name='entrust_details'),
+    
     # function
     path('service/get_cars/',views.get_cars,name='get_cars'),
 
