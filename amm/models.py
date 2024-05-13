@@ -42,10 +42,9 @@ class Repair_commission(models.Model):
     principal = models.ForeignKey(User, on_delete=models.CASCADE)
     service_man = models.ForeignKey(Service_advisor,on_delete=models.CASCADE)
     car = models.ForeignKey(Vehicle,on_delete=models.CASCADE)
-    # 故障信息
-    repair_type = models.CharField(max_length=20)
-    work_type = models.CharField(max_length=20)
-    settle_type = models.CharField(max_length=20)
+    repair_type = models.CharField(max_length=20,default='common') # common urgent
+    work_type = models.CharField(max_length=20,default='small')   # big middle small
+    settle_type = models.CharField(max_length=20,default='self pay') # self pay, three guarantees, claim
     fault_info = models.CharField(max_length=100)
     wash = models.BooleanField(default=False)
     material_cost  = models.FloatField(default=0)
