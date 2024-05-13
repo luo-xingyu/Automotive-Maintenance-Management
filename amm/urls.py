@@ -23,7 +23,7 @@ urlpatterns = [
     # Module: repair_manager
     path('repair_manage/', views.manageIndex,name='repair_manager'),
     path('repair_manage/work',views.manageTask,name='manageTask'),
-
+    path('repair_manage/check_cost',views.check_cost,name='check_cost'),
     # wechat applet #
 
     # Module: user

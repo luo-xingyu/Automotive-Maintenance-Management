@@ -49,6 +49,7 @@ class Repair_commission(models.Model):
     wash = models.BooleanField(default=False)
     material_cost  = models.FloatField(default=0)
     labor_cost = models.FloatField(default=0)
+    total_cost = models.FloatField(default=0)
     time = models.DateTimeField(auto_now_add=True)
     expected_delivery_time = models.IntegerField(default=14)
     is_carried = models.BooleanField(default=False)

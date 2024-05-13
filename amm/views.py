@@ -165,7 +165,6 @@ def entrust(request):
     service_name = request.session.get('username')
     service_id = models.Service_advisor.objects.filter(name=service_name).first().id
     user_list = models.User.objects.all()
-    # entrust_list = models.Repair_commission.objects.all()
     
     entrust_list = models.Repair_commission.objects.prefetch_related(
         Prefetch('car', queryset=models.Vehicle.objects.all()),
@@ -179,6 +178,7 @@ def entrust(request):
             'license_plate': entrust.car.license_plate if entrust.car else 'No Car Info',
             'principal_name': entrust.principal.user_name if entrust.principal else 'No Principal Info',
             'fault_info': entrust.fault_info,
+            'repair_type': entrust.repair_type,
             'material_cost': entrust.material_cost,
             'labor_cost': entrust.labor_cost,
             'is_carried': entrust.is_carried,
@@ -186,17 +186,25 @@ def entrust(request):
         }
         entrust_data.append(entrust_info)
 
+    entrust_data.sort(key=lambda x: x['repair_type'] != 'urgent')
     info_list =  {'user_list':user_list,'entrust_data':entrust_data}
+
     if request.method == 'POST':
         if request.POST.get('action') == 'add':
             user_id = request.POST.get('customer_id')
             car_id = request.POST.get('car_id')
             wash = request.POST.get('wash')
             error_info = request.POST.get('fault_description')
+            repair_type = request.POST.get('repair_type')
+            work_type = request.POST.get('work_type')
+            settle_type = request.POST.get('settle_type')
             commission = models.Repair_commission.objects.create(principal_id=user_id,
                                                                  service_man_id=service_id,
                                                                  car_id=car_id,
                                                                  fault_info=error_info,
+                                                                 repair_type=repair_type,
+                                                                 work_type=work_type,
+                                                                 settle_type=settle_type,
                                                                  wash=wash)
             commission.save()
             return redirect('/service/entrust')
@@ -221,6 +229,9 @@ def entrust_details(request):
         'fault_info': entrust.fault_info,
         'material_cost': entrust.material_cost,
         'labor_cost': entrust.labor_cost,
+        'repair_type': entrust.repair_type,
+        'work_type': entrust.work_type,
+        'settle_type': entrust.settle_type,
         'is_carried': entrust.is_carried,
         'is_finished': entrust.is_finished,
         'is_paid': entrust.is_paid
@@ -237,6 +248,49 @@ def get_cars(request):
 # =============================================================================
 # Module: repair_manager
 # =============================================================================
+
+# 对于一个委托单，如果里面所有的工作都已经完成，显示在结算费用的页面，点击右侧结算费用按钮，显示当前的
+# 人工费用，物料费用，这两个费用可以修改，确认后，自动计算总费用，修改委托单信息。费用计算完毕。
+# 折扣在用户支付时计算。
+
+def check_cost(request):
+    commission_all = models.Repair_commission.objects.filter(is_finished=True,is_paid=False,total_cost=0).all()
+    commission_list = []
+    for commission in commission_all:
+        # 人工费用计算
+        labor_cost = 0
+        orders = models.Repair_order.objects.filter(repair_commission=commission).all()
+        for order in orders:
+            labor_cost += order.work_time * models.Repair_cost.objects.filter(project=order.project).first().unit_laber_cost
+        models.Repair_commission.objects.filter(id=commission.id).update(labor_cost=labor_cost)
+        # 物料费用计算
+        material_cost = 0
+        for order in orders:
+            material_cost += models.Repair_cost.objects.filter(project=order.project).first().material_cost
+        models.Repair_commission.objects.filter(id=commission.id).update(material_cost=material_cost)
+        # 信息发送前端进行检查
+        car_license = models.Vehicle.objects.filter(id=commission.car.id).first().license_plate
+        info = {
+            'id':commission.id,
+            'car_license_plate':car_license,
+            'fault_info':commission.fault_info,
+            'material_cost':commission.material_cost,
+            'labor_cost':commission.labor_cost,
+            'total_cost':commission.total_cost
+        }
+        commission_list.append(info)
+
+    if request.method == 'POST':
+        commission_id = request.POST.get('commission_id')
+        material_cost = request.POST.get('material_cost')
+        labor_cost = request.POST.get('labor_cost')
+        total_cost = request.POST.get('total_cost')
+        models.Repair_commission.objects.filter(id=commission_id).update(material_cost=material_cost,
+                                                                          labor_cost=labor_cost,
+                                                                          total_cost=total_cost)
+        return redirect('/repair_manage/check_cost')
+    
+    return render(request,'repair_manager/check_cost.html',{'commission_list':commission_list})
 
 
 def manageIndex(request):
@@ -332,6 +386,9 @@ def manageTask(request):
         return redirect('/repair_manage/work')
 
     return render(request,'repair_manager/work.html',data)
+
+
+
 
 # wechat applet
 def user_login(request):

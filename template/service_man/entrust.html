@@ -140,10 +140,39 @@
                             <option value="0">否</option>
                         </select>
                         </div>
-                        
                       </div>
                       
-                      <br>
+                      <div class="row" style="padding: 8px;">
+                          <div class="col-sm-4 form-group">
+                            <label for="repair_type">维修类型</label>
+                            <select id="repair_type" name="repair_type">
+                                <option value="#">请选择维修类型</option>
+                                <option value="normal">普通</option>
+                                <option value="urgent">加急</option>
+                            </select>
+                          </div>
+              
+                          <div class="col-sm-4 form-group">
+                              <label for="work_type">作业类型</label>
+                              <select id="work_type" name="work_type">
+                                  <option value="#">请选择作业类型</option>
+                                  <option value="big">大</option>
+                                  <option value="medium">中</option>
+                                  <option value="small">小</option>
+                              </select>
+                          </div>
+              
+                          <div class="col-sm-4 form-group">
+                          <label for="settle_type">结算方式</label>
+                            <select id="settle_type" name="settle_type">
+                              <option value="#">请选择结算方式</option>
+                              <option value="self pay">自付</option>
+                              <option value="three guarantees">三包</option>
+                              <option value="claim">索赔</option>
+                            </select>
+                          </div>
+                      </div>
+
                       <label for="fault_description">故障描述</label>
                       <textarea name="fault_description" rows="4" placeholder="请输入故障描述"></textarea>              
                     
