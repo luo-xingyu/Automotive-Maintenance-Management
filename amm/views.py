@@ -183,6 +183,8 @@ def entrust(request):
             'labor_cost': entrust.labor_cost,
             'is_carried': entrust.is_carried,
             'is_finished': entrust.is_finished,
+            'is_paid': entrust.is_paid,
+            'repair_type': entrust.repair_type,
         }
         entrust_data.append(entrust_info)
 
@@ -334,38 +336,25 @@ def manageTask(request):
             'car_type': entrust.car.type if entrust.car else 'No Car Info',
             'fault_info': entrust.fault_info,
             'wash': entrust.wash,
+            'repair_type': entrust.repair_type,
+            'is_paid': entrust.is_paid,
         }
         entrust_data.append(entrust_info)
     
-    entrust_list2 = models.Repair_commission.objects.prefetch_related(
-        Prefetch('car', queryset=models.Vehicle.objects.all()),
-        Prefetch('principal', queryset=models.User.objects.all())
-        ).filter(is_finished=False,is_carried=True).all()
+    entrust_data.sort(key=lambda x: x['repair_type'] != 'urgent') # 待分配的任务
     
-    entrust_cost = []
-    for entrust in entrust_list2:
-        entrust_info = {
-            'id': entrust.id,
-            'principal_name': entrust.principal.user_name if entrust.principal else 'No Principal Info',
-            'license_plate': entrust.car.license_plate if entrust.car else 'No Car Info',
-            'car_type': entrust.car.type if entrust.car else 'No Car Info',
-            'fault_info': entrust.fault_info,
-            'wash': entrust.wash,
-        }
-        entrust_cost.append(entrust_info)
-
     repair_project = models.Repair_cost.objects.all()
     repair_man = models.Repair_man.objects.all()
     repair_project_json = serializers.serialize('json', repair_project)
     repair_man_json = serializers.serialize('json', repair_man)
 
     data = {
-        'entrust_data': entrust_data, # 待分配的任务
-        'entrust_cost': entrust_cost, # 没有结算费用的任务 在work.html中补充结算费用的地方
+        'entrust_data': entrust_data, 
         'repair_project': repair_project_json,
         'repair_man':repair_man_json
     }
 
+    # 分配任务
     if request.method == 'POST':
         commission_id = request.POST.get('commission_id')
         projects = request.POST.getlist('projects[]')

@@ -215,6 +215,7 @@
             <th>承接情况</th>
             <th>维修情况</th>
             <th>支付情况</th>
+            <th>维修类型</th>
             <th>操作</th>
         </tr>
       </thead>
@@ -243,6 +244,13 @@
                 未支付
                 {% else %}
                 已支付
+                {% endif %}
+            </td>
+            <td>
+                {% if item.repair_type == 'normal' %}
+                普通
+                {% else %}
+                加急
                 {% endif %}
             </td>
             <td>

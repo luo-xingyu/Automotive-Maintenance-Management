@@ -58,6 +58,7 @@
             <th>车牌号</th>
             <th>车型</th>
             <th>故障信息</th>
+            <th>维修类型</th>
             <th>是否洗车</th>
             <th>操作</th>
         </tr>
@@ -71,6 +72,13 @@
             <td>{{ item.car_type }}</td>
             <td>{{ item.fault_info }}</td>
             <td>
+                {% if item.repair_type == 'normal' %}
+                普通
+                {% else %}
+                加急
+                {% endif %}
+            </td>
+            <td>
                 {% if item.wash %}
                     是
                 {% else %}
@@ -78,12 +86,12 @@
                 {% endif %}
             </td>
             <td>
-                <!-- <input type="hidden" name="id" value="{{ item.id }}"> -->
-                <!-- <button class="btn btn-danger" name="action" value="assign" type="submit">分配任务</button> -->
-                <button type="button" class="btn" data-toggle="modal" data-target="#assignTask">分配任务</button>
 
+                <button type="button" class="btn" data-toggle="modal" data-target="#assignTask{{ item.id }}">
+                    分配任务
+                </button>
                 <!-- 模态 -->
-                <div class="modal fade" id="assignTask" role="dialog">
+                <div class="modal fade" id="assignTask{{ item.id }}" role="dialog">
                     <div class="modal-dialog modal-lg" style="margin-top: 100px;">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -104,7 +112,9 @@
 
                             <div class="modal-footer">
                                 <div>
-                                    <button type="button" class="btn btn-default" id="addRepairRow">添加任务</button>
+                                    <button type="button" class="btn btn-default addRepairRow" data-item-id="{{ item.id }}">
+                                        添加任务
+                                    </button>
                                     <button type="submit" class="btn" style=" color: #f4511e;">完成分配</button>
                                     <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
                                 </div>
@@ -116,43 +126,6 @@
                     </div>
                 </div>
 
-                <script>
-                    document.getElementById('addRepairRow').addEventListener('click', function() {
-                        var form = document.querySelector('.modal-body form'); 
-                        var newDiv = document.createElement('div');
-
-                        var projectsOptions = repairProjects.map(function(project) {
-                            return `<option value="${project.pk}">${project.fields.project}</option>`;
-                        }).join('');
-
-                        var menOptions = repairMen.map(function(man) {
-                            return `<option value="${man.pk}">${man.fields.name} ${man.fields.job}</option>`;
-                        }).join('');
-
-                        newDiv.innerHTML = `
-                            <div class="row">
-                                <div class="form-group col-md-4">
-                                    <label>维修项目选择:</label>
-                                    <select class="form-control" name="projects[]">
-                                        ${projectsOptions}
-                                    </select>
-                                </div>
-                                <div class="form-group col-md-4">
-                                    <label>工时:</label>
-                                    <input type="number" class="form-control" name="times[]" required min="1">
-                                </div>
-                                <div class="form-group col-md-4">
-                                    <label>维修员选择:</label>
-                                    <select class="form-control" name="men[]">
-                                        ${menOptions}
-                                    </select>
-                                </div> 
-                            </div>
-                        `;
-                        form.insertBefore(newDiv, form.querySelector('.modal-footer')); 
-                    });
-                    </script>
-                    
             </td>
         </tr>
         {% endfor %}
@@ -160,9 +133,74 @@
     </table>
 </div>
 
+
+
+<script>  
+    document.querySelectorAll('.btn[data-target]').forEach(button => {
+        button.addEventListener('click', function() {
+            // 获取当前模态框 ID
+            var targetModalId = this.dataset.target.slice(1);
+            var modalButton = document.querySelector(`#${targetModalId} .addRepairRow`);
+            
+            // 移除现有的监听器以防重复
+            modalButton.removeEventListener('click', addRepairRowHandler);
+            
+            // 添加新的监听器
+            modalButton.addEventListener('click', addRepairRowHandler);
+        });
+    });
+    
+    function addRepairRowHandler() {
+        var modalId = this.closest('.modal').id;
+        var form = document.querySelector('#' + modalId + ' .modal-body form');
+        var newDiv = document.createElement('div');
+        newDiv.classList.add('repair-row');
+    
+        var projectsOptions = repairProjects.map(function(project) {
+            return `<option value="${project.pk}">${project.fields.project}</option>`;
+        }).join('');
+    
+        var menOptions = repairMen.map(function(man) {
+            return `<option value="${man.pk}">${man.fields.name} ${man.fields.job}</option>`;
+        }).join('');
+    
+        newDiv.innerHTML = `
+            <div class="row">
+                <div class="form-group col-md-4">
+                    <label>维修项目选择:</label>
+                    <select class="form-control" name="projects[]">
+                        ${projectsOptions}
+                    </select>
+                </div>
+                <div class="form-group col-md-2">
+                    <label>工时:</label>
+                    <input type="number" class="form-control" name="times[]" required min="1">
+                </div>
+                <div class="form-group col-md-4">
+                    <label>维修员选择:</label>
+                    <select class="form-control" name="men[]">
+                        ${menOptions}
+                    </select>
+                </div> 
+                <div class="form-group col-md-2">
+                    <br>
+                    <button type="button" class="btn btn-danger btn-remove">删除</button>
+                </div>
+            </div>
+        `;
+        form.insertBefore(newDiv, form.querySelector('.modal-footer')); 
+        
+        newDiv.querySelector('.btn-remove').addEventListener('click', function() {
+            this.closest('.repair-row').remove(); 
+        });
+    }
+</script>
+
+
 <footer class="container-fluid text-center">
 <p>© 2024 Repair Costs Dashboard</p>
 </footer>
 
 </body>
 </html>
+
