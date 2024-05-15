@@ -43,6 +43,7 @@ Page({
 
     finishTask: function(e) 
     {
+        let that=this;
         let taskId = e.currentTarget.dataset.id;
         wx.request({
             url: 'https://app6321.acapp.acwing.com.cn/repair_finish/',
@@ -58,6 +59,8 @@ Page({
                         title: '任务完成',
                         icon: 'success'
                     });
+
+                    that.fetchTasks();
                 }
             }
         });

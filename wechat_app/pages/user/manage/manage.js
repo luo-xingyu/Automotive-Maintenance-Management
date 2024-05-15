@@ -16,7 +16,7 @@ Page({
     },
 
     onShow:function(options) {
-        console.log( this.getTabBar() + 'home');
+        //console.log( this.getTabBar() + 'home');
         this.getTabBar().updateTabs(); 
         if (typeof this.getTabBar === 'function' &&
             this.getTabBar()) {
@@ -67,9 +67,20 @@ Page({
 
     submitForm: function(e) 
     {
+        var that = this;
         const { type, license_plate, ident_number } = e.detail.value;
- 
-        this.data.vehicles.push({ type, license_plate, ident_number });
+        
+        if (!type || !license_plate || !ident_number) {
+            wx.showToast({
+              title: '请填写所有字段',
+              icon: 'none'
+            });
+            return;
+        }
+
+        var selectedType = this.data.Types[type];
+
+        this.data.vehicles.push({ selectedType, license_plate, ident_number });
         this.setData({
             vehicles: this.data.vehicles
         });
@@ -78,7 +89,7 @@ Page({
             url: 'https://app6321.acapp.acwing.com.cn/user_managecar/', 
             method: 'GET',
             data: {
-                type         : type,
+                type         : selectedType,
                 license_plate: license_plate,
                 ident_number : ident_number,
                 username     : this.username,
@@ -93,7 +104,12 @@ Page({
                         icon : 'success'
                     });
 
-                    this.setData({ isModalOpen: false });
+                    that.setData({ 
+                        isModalOpen  : false,
+                        selectedType : '',
+                        license_plate: '',
+                        ident_number : '',
+                    });
                 }
             }
         })

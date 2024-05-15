@@ -5,6 +5,9 @@ Page({
     onLoad: function(options) 
     {
         this.username = wx.getStorageSync('username');
+        this.setData({
+            username: this.username
+        });
     },
     
     onShow:function(options) {

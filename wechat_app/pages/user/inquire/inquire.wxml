@@ -1,16 +1,22 @@
 <navigation-bar title="维修驿站" back="{{false}}" color="black" background="#FFF"></navigation-bar>
 
 <view class="container">
-    <h1>委托列表</h1>
-    <block wx:for="{{entrusts}}" wx:key="id">
-        <view class="list-item">
-            <view class="entrust-info">
-                委托ID: {{item.id}}, 车牌号：{{item.car_license_plate}}
+    <view class="header">
+        <view class="title">委托进度查询</view>
+    </view>
+
+    <scroll-view scroll-y="true" class="scroll-view">
+        <block wx:for="{{entrusts}}" wx:key="unique">
+            <view class="row">
+                <view class="cell"><text class="label">委托ID：</text>{{item.id}}</view>
+                <view class="cell"><text class="label">车牌号：</text>{{item.car_license_plate}}</view>
+                <view class="cell">
+                    <button wx:if="{{!item.is_carried}}" data-entrust-id="{{item.id}}" disabled="true" class="button">未承接</button>
+                    <button wx:if="{{item.is_carried && !item.is_finished}}" data-entrust-id="{{item.id}}" bindtap="queryProgress" class="button">进度查询</button>
+                    <button wx:if="{{item.is_carried && item.is_finished }}" data-entrust-id="{{item.id}}" bindtap="payForEntrust" class="button">支付</button>
+                </view>
+
             </view>
-            <view class="action-buttons">
-                <button wx:if="{{!item.is_finished}}" data-entrust-id="{{item.id}}" bindtap="queryProgress">进度查询</button>
-                <button wx:if="{{item.is_finished}}" data-entrust-id="{{item.id}}" bindtap="payForEntrust">支付</button>
-            </view>
-        </view>
-    </block>
+        </block>
+    </scroll-view>
 </view>

@@ -10,7 +10,6 @@ Page({
     },
 
     onShow:function(options) {
-        console.log( this.getTabBar() + 'home');
         this.getTabBar().updateTabs(); 
         if (typeof this.getTabBar === 'function' &&
             this.getTabBar()) {
@@ -49,7 +48,7 @@ Page({
                 let content = '';
 
                 res.data.forEach((order, index) => {  
-                    content += '委托 ' + (index + 1) + ':\r\n';
+                    content += '委托 ' + (index + 1) +":";
                     content += order.project + ' - ' + (order.progress ? '完成' : '未完成') + '\r\n';  
                 });
 
