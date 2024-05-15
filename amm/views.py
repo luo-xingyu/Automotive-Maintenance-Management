@@ -4,7 +4,7 @@ from django.contrib.auth import logout
 from django.http import JsonResponse
 from django.db.models import Prefetch
 from django.core import serializers
-from django.middleware.csrf import get_token
+from operator import itemgetter
 import json
 
 def home(request):
@@ -189,6 +189,7 @@ def entrust(request):
         entrust_data.append(entrust_info)
 
     entrust_data.sort(key=lambda x: x['repair_type'] != 'urgent')
+    entrust_data.sort(key=lambda x: x['is_paid'] == True)
     info_list =  {'user_list':user_list,'entrust_data':entrust_data}
 
     if request.method == 'POST':
@@ -219,6 +220,10 @@ def entrust_delete(request):
     models.Repair_commission.objects.filter(id=entrust_id).delete()
     return redirect('/service/entrust')
 
+def entrust_pay(request):
+    entrust_id = request.GET.get('id')
+    models.Repair_commission.objects.filter(id=entrust_id).update(is_paid=True)
+    return  redirect('/service/entrust')
 
 def entrust_details(request):
     entrust_id = request.GET.get('id')
@@ -255,6 +260,7 @@ def get_cars(request):
 # 人工费用，物料费用，这两个费用可以修改，确认后，自动计算总费用，修改委托单信息。费用计算完毕。
 # 折扣在用户支付时计算。
 
+# 这里的代码可以移动到底部维修完成时的处理，而不是在加载页面时处理
 def check_cost(request):
     commission_all = models.Repair_commission.objects.filter(is_finished=True,is_paid=False,total_cost=0).all()
     commission_list = []
@@ -377,8 +383,6 @@ def manageTask(request):
     return render(request,'repair_manager/work.html',data)
 
 
-
-
 # wechat applet
 def user_login(request):
     if request.method == "GET":
@@ -473,14 +477,16 @@ def progressquery(request):
 def get_commissionhistory(request):
     username = request.GET.get('username')
     user = models.User.objects.filter(user_name=username).first()
-    entrust_list = models.Repair_commission.objects.filter(principal=user).all()
+    entrust_list = models.Repair_commission.objects.filter(principal=user,is_paid=True).all()
     entrust_data = []
     for item in entrust_list:
         entrust_info = {
             'id': item.id,
+            'car_license_plate': models.Vehicle.objects.filter(id=item.car.id).first().license_plate,
             'fault_info': item.fault_info,
             'material_cost': item.material_cost,
             'labor_cost': item.labor_cost,
+            'total_cost': item.total_cost,
             'time': item.time,
             'expected_delivery_time': item.expected_delivery_time,
             'is_carried': item.is_carried,
@@ -495,6 +501,40 @@ def pay(requset):
     commission_id = requset.GET.get('commission_id')
     models.Repair_commission.objects.filter(id=commission_id).update(is_paid=True)
     return JsonResponse({'status': 'success', 'message': '支付成功'})
+
+def user_message(request):
+    username = request.GET.get('username')
+    user = models.User.objects.filter(user_name=username).first()
+    message = models.Message.objects.filter(user=user).all()
+    message_list = []
+    for item in message:
+        message_info = {
+            'title': item.title,
+            'content': item.content,
+            'time': item.time,
+            'is_read': item.is_read,
+        }
+        message_list.append(message_info)
+    
+    sorted_message_list = sorted(message_list, key=itemgetter('is_read'))
+    return JsonResponse(sorted_message_list,safe=False)
+
+
+def read_message(request):
+    message_id = request.GET.get('message_id')
+    message = models.Message.objects.filter(id=message_id).all()
+    message.is_read = True
+    message.save()
+    return JsonResponse({'status': 'success', 'message': '消息已读'})
+
+
+def clear_message(request):
+    username = request.GET.get('username')
+    user = models.User.objects.filter(user_name=username).first()
+    message = models.Message.objects.filter(user=user).all()
+    for item in message:
+        item.delete()
+    return JsonResponse({'status': 'success', 'message': '消息已清空'})
 
 # repair_man
 def get_order(request):
@@ -530,5 +570,11 @@ def repair_finsh(request):
     if all_finish:
         commission.is_finished=True
         commission.save()
+        # 创建一条维修完成的message
+        user = commission.principal
+        title = '--维修完成--'
+        content = '您的车辆维修完成,请联系前台工作人员进行缴费取车.'
+        message = models.Message.objects.create(title=title,content=content,user=user)
+        message.save()
 
     return JsonResponse({'status': 'success', 'message': '维修完成'})

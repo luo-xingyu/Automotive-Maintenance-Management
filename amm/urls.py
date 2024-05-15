@@ -14,10 +14,12 @@ urlpatterns = [
     path('service/', views.service,name='service'),
     path('service/project',views.showProject,name='project'),
     path('service/entrust',views.entrust,name='entrust'),
-    path('service/entrust_delete',views.entrust_delete,name='entrust_delete'),
+    
     path('service/entrust_details',views.entrust_details,name='entrust_details'),
     
     # function
+    path('service/entrust_pay',views.entrust_pay,name='entrust_pay'),
+    path('service/entrust_delete',views.entrust_delete,name='entrust_delete'),
     path('service/get_cars/',views.get_cars,name='get_cars'),
 
     # Module: repair_manager
@@ -33,6 +35,9 @@ urlpatterns = [
     path('user_progressquery/',views.progressquery,name='user_progressquery'),
     path('user_commissionhistory/',views.get_commissionhistory,name='user_commissionhistory'),
     path('user_pay/',views.pay,name='user_pay'),
+    path('user_message/',views.user_message,name='user_message'),
+    path('clear_message/',views.clear_message,name='clear_message'),
+    path('read_message/',views.read_message,name='read_message'),
     
     # Module: repair_man
     path('repair_getorder/',views.get_order,name='getorder'),

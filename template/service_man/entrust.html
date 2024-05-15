@@ -256,6 +256,10 @@
             <td>
                 {% if item.is_carried == False %}
                 <a href="entrust_delete?id={{ item.id }}">删除</a>
+                {% elif item.is_finished == False %}
+                <a href="entrust_details?id={{ item.id }}">查看详情</a>
+                {% elif item.is_paid == False %}
+                <a href="entrust_pay?id={{ item.id }}">结算费用</a>
                 {% else %}
                 <a href="entrust_details?id={{ item.id }}">查看详情</a>
                 {% endif %}
